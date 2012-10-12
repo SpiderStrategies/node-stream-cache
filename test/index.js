@@ -9,9 +9,9 @@ describe('Stream Cache', function () {
   var cache, stream
 
   it('sets an item in the cache', function (done) {
-    cache.set('index.js', stream, 60, function (err, data) {
+    cache.set('index.js', stream, 60, function (err) {
       client.get(cache.prefix + 'index.js', function (err, res) {
-        assert.equal(data, res)
+        assert(res)
         done()
       })
     })
@@ -28,27 +28,22 @@ describe('Stream Cache', function () {
   })
 
   it('gets an item from the cache', function (done) {
-    cache.set('index.js', stream, 60, function (err, data) {
+    cache.set('index.js', stream, 60, function (err) {
       var res = cache.get('index.js')
       assert(res instanceof Stream)
       res.on('data', function (d) {
-        assert.equal(data, d)
+        assert(d)
         done()
       })
     })
   })
 
   it('does work if cache is empty', function (done) {
-    var invoked = false
     var work = function () {
-      invoked = true
+      done()
       return stream
     }
-    var finish = function (s) {
-      assert(invoked)
-      done()
-    }
-    cache.process('foo', work, finish, 10)
+    cache.process('foo', work, function () {}, 10)
   })
 
   it('bypasses work if cached', function (done) {

@@ -1,6 +1,6 @@
 {
   "name": "node-stream-cache",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Stream things into a redis cache",
   "main": "index.js",
   "scripts": {
