@@ -27,19 +27,21 @@ describe('Stream Cache', function () {
     })
   })
 
-  it('processes and sets', function (done) {
+  it.only('processes and sets', function (done) {
     cache.process('index2.js', function () {
       return fs.createReadStream(__filename, { encoding: 'utf-8' })
     }, function (res) {
       assert(res instanceof Stream)
-      client.get('c:test:index2.js', function (err, answer) {
-        cache.process('index2.js', function () { return null }, function (r2) {
-          r2.on('data', function (d) {
-            assert.equal(d, answer)
-            done()
-          })
-        }, 60)
-      })
+      setTimeout(function () {
+        client.get('c:test:index2.js', function (err, answer) {
+          cache.process('index2.js', function () { return null }, function (r2) {
+            r2.on('data', function (d) {
+              assert.equal(d, answer)
+              done()
+            })
+          }, 60)
+        })
+      }, 50)
     }, 60)
   })
 
