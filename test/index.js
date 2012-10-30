@@ -27,7 +27,23 @@ describe('Stream Cache', function () {
     })
   })
 
-  it('gets an item from the cache', function (done) {
+  it('processes and sets', function (done) {
+    cache.process('index2.js', function () {
+      return fs.createReadStream(__filename, { encoding: 'utf-8' })
+    }, function (res) {
+      assert(res instanceof Stream)
+      client.get('c:test:index2.js', function (err, answer) {
+        cache.process('index2.js', function () { return null }, function (r2) {
+          r2.on('data', function (d) {
+            assert.equal(d, answer)
+            done()
+          })
+        }, 60)
+      })
+    }, 60)
+  })
+
+  it('gets an item from the cache as a stream', function (done) {
     cache.set('index.js', stream, 60, function (err) {
       var res = cache.get('index.js')
       assert(res instanceof Stream)
